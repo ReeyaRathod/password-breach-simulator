@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Password Breach Simulator</title>
+    <style>
+        body { background-color: #080a0f; color: #c9d1d9; font-family: 'Segoe UI', monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: #12161f; border: 1px solid #ff3333; border-radius: 12px; padding: 30px; width: 450px; box-shadow: 0 0 30px rgba(255, 51, 51, 0.2); }
+        h2 { color: #ff3333; margin-top: 0; letter-spacing: 1px; font-size: 22px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        p.desc { font-size: 12px; color: #8b949e; margin-bottom: 20px; }
+        label { display: block; font-size: 13px; color: #8b949e; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #fff; font-size: 14px; box-sizing: border-box; margin-bottom: 20px; outline: none; }
+        input:focus { border-color: #ff3333; }
+        button { width: 100%; background: #ff3333; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        button:hover { background: #e02e2e; }
+        .card-box { background: #1a202c; border: 1px solid #30363d; padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 13px; }
+        .label-title { color: #8b949e; font-size: 11px; text-transform: uppercase; }
+        .value-text { font-size: 16px; font-weight: bold; margin-top: 4px; }
+        .progress-bg { background: #0d1117; height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .progress-bar { height: 100%; transition: width 0.4s ease; }
+        .breached-alert { background: rgba(248, 81, 73, 0.15); border: 1px solid #f85149; color: #f85149; padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 12px; font-weight: bold; text-align: center; }
+        .hash-box { font-size: 10px; color: #58a6ff; word-break: break-all; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔒 PASSWORD BREACH SIMULATOR</h2>
+        <p class="desc">Simulate how strong or weak passwords are against real-world attack techniques.</p>
+        
+        <form method="POST">
+            <label>Enter Password to Test</label>
+            <input type="text" name="password" required placeholder="Type password..." value="{{ result.password if result else '' }}">
+            <button type="submit">Analyze Strength</button>
+        </form>
+
+        {% if result %}
+        <div class="card-box">
+            <div class="label-title">Time to Crack (Brute-Force)</div>
+            <div class="value-text" style="color: {{ result.color }};">{{ result.crack_time }}</div>
+        </div>
+
+        <div class="card-box">
+            <div class="label-title">Strength Meter</div>
+            <div class="value-text" style="color: {{ result.color }};">{{ result.strength }}</div>
+            <div class="progress-bg">
+                <div class="progress-bar" style="width: {{ result.width }}; background-color: {{ result.color }};"></div>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="label-title">Calculated Entropy</div>
+            <div class="value-text">{{ result.entropy }} bits</div>
+        </div>
+
+        {% if result.is_breached %}
+        <div class="breached-alert">
+            ⚠️ WARNING: Found in known leaked password dictionaries!
+        </div>
+        {% endif %}
+
+        <div class="card-box">
+            <div class="label-title">Generated Hashes (Offline Simulation)</div>
+            <div style="margin-top: 6px;">
+                <span style="color: #8b949e; font-size: 11px;">MD5:</span> <span class="hash-box">{{ result.md5 }}</span><br>
+                <span style="color: #8b949e; font-size: 11px;">SHA-256:</span> <span class="hash-box">{{ result.sha256 }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
